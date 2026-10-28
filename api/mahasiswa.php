@@ -70,7 +70,7 @@ switch ($method) {
 function handleGet(PDO $pdo, ?int $id): void {
     if ($id !== null && $id > 0) {
         //Percobaan 5-2 Langkah 2 jika id diberikan
-        $stmt = $pdo->prepare('SELECT id, npm, nama, program_studi, angkatan email, created_at FROM mahasiswa WHERE id =id LIMIT 1');
+        $stmt = $pdo->prepare('SELECT id, npm, nama, program_studi, angkatan email, created_at FROM mahasiswa WHERE id = :id LIMIT 1');
         $stmt->execute([':id' => $id]);
         $mahasiswa = $stmt->fetch();
 
@@ -169,17 +169,17 @@ function handlePut(PDO $pdo, ?int $id): void {
    }
 
    $input = json_decode(file_get_contents('php://input'), true) ?? [];
-   $stmt = $pdo->prepare('UPDATE mahasiswa SET nama = :nama, program_studi = :prodi, angkatan = "angkatan, email = :email WHERE id = :id');
-   $stmt->execute([
-    ':id' => $id,
-    ':nama' => trim($input['nama'] ?? ''),
-    ':prodi' => trim($input['program_studi'] ??''),
-    ':angkatan' => (int)($input['angkatan'] ?? 0),
-    ':email' => trim($input['email'] ?? '') 
-   ]);
+   $stmt = $pdo->prepare('UPDATE mahasiswa SET nama = :nama, program_studi = :prodi, angkatan = :angkatan, email = :email WHERE id = :id');
+    $stmt->execute([
+        ':id' => $id,
+        ':nama' => trim($input['nama'] ?? ''),
+        ':prodi' => trim($input['program_studi'] ?? ''),
+        ':angkatan' => (int)($input['angkatan'] ?? 0),
+        ':email' => trim($input['email'] ?? '') 
+    ]);
 
-   http_response_code(200);
-   echo json_encode(['status' => 'success', 'message' => 'Data mahasiswa berhasil diperbarui,']);
+    http_response_code(200);
+    echo json_encode(['status' => 'success', 'message' => 'Data mahasiswa berhasil diperbarui.']);
 }
 
 /**
